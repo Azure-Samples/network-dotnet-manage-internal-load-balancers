@@ -54,7 +54,7 @@ namespace ConsoleApplication
             resourceClient.ResourceGroups.CreateOrUpdate(resourceGroupName, new ResourceGroup { Location = westus});
 
             Random r = new Random();
-            int postfix = r.Next(0, 1000000);
+            int postfix = 145699; //r.Next(0, 1000000);
             var storageAccountName = String.Format("dotnetstor{1}", resourceGroupName, postfix);
             Write("Creating a premium storage account with encryption off named {0} in resource group {1}", storageAccountName, resourceGroupName);
             var storCreateParams = new StorageAccountCreateParameters {
@@ -169,7 +169,7 @@ namespace ConsoleApplication
  
             vms.ForEach(vm => {
                Write("Connect to your new virtual machine via: `ssh -p {0} {1}@{2}`. Admin Password is: {3}", 
-               vm.Name == "firstvm" ? 21 : 23, 
+               vm.Name == "sample-dotnet-vm-firstvm" ? 21 : 23, 
                vm.OsProfile.AdminUsername, 
                pubIp.DnsSettings.Fqdn, 
                vm.OsProfile.AdminPassword); 
@@ -178,8 +178,8 @@ namespace ConsoleApplication
             Write("Press any key to continue and delete the sample resources");
             Console.ReadLine();
 
-            // Write("Deleting resource group {0}", resourceGroupName);
-            // resourceClient.ResourceGroups.Delete(resourceGroupName);
+            Write("Deleting resource group {0}", resourceGroupName);
+            resourceClient.ResourceGroups.Delete(resourceGroupName);
         }
 
         private static VirtualMachine CreateVM(
