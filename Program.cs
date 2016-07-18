@@ -194,7 +194,7 @@ namespace ConsoleApplication
             InboundNatRule inboundNatRule,
             AvailabilitySet availabilitySet)
         {
-                        // Create the network interface
+            // Create the network interface
             Write("Creating a network interface for the VM {0}", vmName);            
             var vnetNicCreateParams = new NetworkInterface {
                 Location = location,
