@@ -1,5 +1,5 @@
 ---
-services: networking
+services: virtual-network
 platforms: dotnet
 author: devigned
 ---
