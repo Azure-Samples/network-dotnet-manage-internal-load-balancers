@@ -54,7 +54,7 @@ namespace ConsoleApplication
             resourceClient.ResourceGroups.CreateOrUpdate(resourceGroupName, new ResourceGroup { Location = westus});
 
             Random r = new Random();
-            int postfix = 145699; //r.Next(0, 1000000);
+            int postfix = r.Next(0, 1000000);
             var storageAccountName = String.Format("dotnetstor{1}", resourceGroupName, postfix);
             Write("Creating a premium storage account with encryption off named {0} in resource group {1}", storageAccountName, resourceGroupName);
             var storCreateParams = new StorageAccountCreateParameters {
