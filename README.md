@@ -1,5 +1,5 @@
 ---
-services: virtual-network
+services: load-balancer
 platforms: dotnet
 author: devigned
 ---
