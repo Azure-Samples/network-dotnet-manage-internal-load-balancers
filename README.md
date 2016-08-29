@@ -1,5 +1,5 @@
 ---
-services: load-balancer
+services: networking
 platforms: dotnet
 author: devigned
 ---
@@ -42,7 +42,7 @@ The sample performs the following tasks to create the load balancer and the load
   5. Build inbound NAT rule 1
   6. Build inbound NAT rule 2
 6. Create the load balancer with the above payload
-7. Create an Availability Set
+7. Create an availability set
 11. Create the first VM: Web1
 	10. Find an Ubutnu VM image
 	8. Create the network interface
@@ -63,7 +63,7 @@ To run the sample, follow these steps:
 
 4. Clone the sample repository.
 
-		https://github.com/Azure-Samples/storage-dotnet-resource-provider-getting-started.git
+		https://github.com/Azure-Samples/network-dotnet-manage-loadbalancer.git
 
 5. Create an Azure service principal using 
     [Azure CLI](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal-cli/),
@@ -71,22 +71,16 @@ To run the sample, follow these steps:
     or [Azure Portal](https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/).
 
 6. Open the sample solution in Visual Studio, and restore any packages if prompted.
-7. In the sample source code, locate the constants for your subscription ID and resource group name, and specify values for them. 
-	
-		const string subscriptionId = "<subscriptionid>";         
-	
-	    //Specify a resource group name of your choice. Specifying a new value will create a new resource group.
-	    const string rgName = "TestResourceGroup";        
 
-8. Set the following environment variables using the information from the service principle that you created above.
+8. Set the following environment variables using the information from the service principle that you created above. The sample retrieves these environment variables while running.
     
 	    AZURE_TENANT_ID={your tenant ID as a guid OR the domain name of your org <contosocorp.com>}	
-	    CLIENT_ID={your client ID}
-	    APPLICATION_SECRET={your client secret}
+	    AZURE_CLIENT_ID={your client ID}
+	    AZURE_SECRET={your client secret}
 	    AZURE_SUBSCRIPION_ID={your subscription ID}
 
 ## More information
 
-- [Azure SDK for .NET](https://github.com/tamram/azure-sdk-for-net/)
+- [Azure SDK for .NET source](https://github.com/Azure/azure-sdk-for-net/)
 - [Azure Load Balancer overview](https://azure.microsoft.com/documentation/articles/load-balancer-overview/)
 
