@@ -1,92 +1,61 @@
 ---
-services: load-balancer
-platforms: dotnet
-author: devigned
+services: Network
+platforms: .Net
+author: selvasingh
 ---
 
-# Getting Started with Azure Resource Manager for load balancers in .NET
+#Getting Started with Network - Manage Internal Load Balancer - in .Net #
 
-This sample shows how to manage a load balancer using the Azure Resource Manager APIs for .NET.
+      Azure Network sample for managing internal load balancers -
+      High-level ...
+      - Create an internal load balancer that receives network traffic on
+        port 1521 (Oracle SQL Node Port) and sends load-balanced traffic
+        to two virtual machines
+      - Create NAT rules for SSH and TELNET access to virtual
+        machines behind the load balancer
+      - Create a health probe
+      Details ...
+      Create an internal facing load balancer with ...
+      - A frontend private IP address
+      - One backend address pool which contains network interfaces for the virtual
+        machines to receive 1521 (Oracle SQL Node Port) network traffic from the load balancer
+      - One load balancing rule fto map port 1521 on the load balancer to
+        ports in the backend address pool
+      - One probe which contains HTTP health probe used to check availability
+        of virtual machines in the backend address pool
+      - Two inbound NAT rules which contain rules that map a public port on the load
+        balancer to a port for a specific virtual machine in the backend address pool
+        - this provides direct VM connectivity for SSH to port 22 and TELNET to port 23
+      Create two network interfaces in the backend subnet ...
+      - And associate network interfaces to backend pools and NAT rules
+      Create two virtual machines in the backend subnet ...
+      - And assign network interfaces
+      Update an existing load balancer, configure TCP idle timeout
+      Create another load balancer
+      List load balancers
+      Remove an existing load balancer.
 
-You can use a load balancer to provide high availability for your workloads in Azure. An Azure load balancer is a Layer-4 (TCP, UDP) type load balancer that distributes incoming traffic among healthy service instances in cloud services or virtual machines defined in a load balancer set.
 
-For a detailed overview of Azure load balancers, see [Azure Load Balancer overview](https://azure.microsoft.com/documentation/articles/load-balancer-overview/).
+## Running this Sample ##
 
-![alt tag](./lb.JPG)
+To run this sample:
 
-This sample deploys an internet-facing load balancer. It then creates and deploys two Azure virtual machines behind the load balancer. For a detailed overview of internet-facing load balancers, see [Internet-facing load balancer overview](https://azure.microsoft.com/documentation/articles/load-balancer-internet-overview/).
+Set the environment variable `AZURE_AUTH_LOCATION` with the full path for an auth file. See [how to create an auth file](https://github.com/Azure/azure-sdk-for-net/blob/Fluent/AUTH.md).
 
-To deploy an internet-facing load balancer, you'll need to create and configure the following objects.
+    git clone https://github.com/Azure-Samples/network-dotnet-manage-internal-load-balancers.git
 
-- Front end IP configuration - contains public IP addresses for incoming network traffic. 
-- Back end address pool - contains network interfaces (NICs) for the virtual machines to receive network traffic from the load balancer. 
-- Load balancing rules - contains rules mapping a public port on the load balancer to port in the back end address pool.
-- Inbound NAT rules - contains rules mapping a public port on the load balancer to a port for a specific virtual machine in the back end address pool.
-- Probes - contains health probes used to check availability of virtual machines instances in the back end address pool.
+    cd network-dotnet-manage-internal-load-balancers
 
-You can get more information about load balancer components with Azure resource manager at [Azure Resource Manager support for Load Balancer](https://azure.microsoft.com/documentation/articles/load-balancer-arm/).
+    dotnet restore
 
-## Tasks performed in this sample
+    dotnet run
 
-The sample performs the following tasks to create the load balancer and the load-balanced virtual machines: 
+## More information ##
 
-1. Create a resource group
-2. Create a virtual network (vnet)
-3. Create a subnet
-4. Create a public IP
-5. Build the load balancer payload
-  1. Build a front-end IP pool
-  2. Build a back-end address pool
-  3. Build a health probe
-  4. Build a load balancer rule
-  5. Build inbound NAT rule 1
-  6. Build inbound NAT rule 2
-6. Create the load balancer with the above payload
-7. Create an Availability Set
-11. Create the first VM: Web1
-	10. Find an Ubutnu VM image
-	8. Create the network interface
-12. Create the second VM: Web2
-	10. Find an Ubutnu VM image
-	8. Create the network interface
-13. Delete the resource group and the resources created in the previous steps
+[Azure Management Libraries for C#](https://github.com/Azure/azure-sdk-for-net/tree/Fluent)
+[Azure .Net Developer Center](https://azure.microsoft.com/en-us/develop/net/)
+If you don't have a Microsoft Azure subscription you can get a FREE trial account [here](http://go.microsoft.com/fwlink/?LinkId=330212)
 
-## Run this sample
+---
 
-To run the sample, follow these steps:
-
-1. If you don't already have a Microsoft Azure subscription, you can register for a [free trial account](http://go.microsoft.com/fwlink/?LinkId=330212).
-
-2. Install [Visual Studio](https://www.visualstudio.com/downloads/download-visual-studio-vs.aspx) if you don't have it already. 
-
-3. Install the [Azure SDK for .NET](https://azure.microsoft.com/downloads/) if you have not already done so. We recommend using the most recent version.
-
-4. Clone the sample repository.
-
-		https://github.com/Azure-Samples/storage-dotnet-resource-provider-getting-started.git
-
-5. Create an Azure service principal using 
-    [Azure CLI](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal-cli/),
-    [PowerShell](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal/)
-    or [Azure Portal](https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/).
-
-6. Open the sample solution in Visual Studio, and restore any packages if prompted.
-7. In the sample source code, locate the constants for your subscription ID and resource group name, and specify values for them. 
-	
-		const string subscriptionId = "<subscriptionid>";         
-	
-	    //Specify a resource group name of your choice. Specifying a new value will create a new resource group.
-	    const string rgName = "TestResourceGroup";        
-
-8. Set the following environment variables using the information from the service principle that you created above.
-    
-	    AZURE_TENANT_ID={your tenant ID as a guid OR the domain name of your org <contosocorp.com>}	
-	    CLIENT_ID={your client ID}
-	    APPLICATION_SECRET={your client secret}
-	    AZURE_SUBSCRIPION_ID={your subscription ID}
-
-## More information
-
-- [Azure SDK for .NET](https://github.com/tamram/azure-sdk-for-net/)
-- [Azure Load Balancer overview](https://azure.microsoft.com/documentation/articles/load-balancer-overview/)
-
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
