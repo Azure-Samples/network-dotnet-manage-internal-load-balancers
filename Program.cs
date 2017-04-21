@@ -6,9 +6,9 @@ using Microsoft.Azure.Management.Compute.Fluent.Models;
 using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.Network.Fluent;
 using Microsoft.Azure.Management.Network.Fluent.Models;
-using Microsoft.Azure.Management.Resource.Fluent;
-using Microsoft.Azure.Management.Resource.Fluent.Core;
-using Microsoft.Azure.Management.Resource.Fluent.Core.ResourceActions;
+using Microsoft.Azure.Management.ResourceManager.Fluent;
+using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
+using Microsoft.Azure.Management.ResourceManager.Fluent.Core.ResourceActions;
 using Microsoft.Azure.Management.Samples.Common;
 using System;
 using System.Collections.Generic;
@@ -134,7 +134,7 @@ namespace ManageInternalLoadBalancer
                         .WithExistingResourceGroup(rgName)
                         .DefinePrivateFrontend(privateFrontEndName)
                             .WithExistingSubnet(network, "Back-end")
-                            .WithPrivateIpAddressStatic("172.16.3.5")
+                            .WithPrivateIPAddressStatic("172.16.3.5")
                             .Attach()
                         // Add one backend - one per rule
                         .DefineBackend(backendPoolName3)
@@ -200,7 +200,7 @@ namespace ManageInternalLoadBalancer
                         .WithNewResourceGroup(rgName)
                         .WithExistingPrimaryNetwork(network)
                         .WithSubnet("Back-end")
-                        .WithPrimaryPrivateIpAddressDynamic()
+                        .WithPrimaryPrivateIPAddressDynamic()
                         .WithExistingLoadBalancerBackend(loadBalancer3, backendPoolName3)
                         .WithExistingLoadBalancerInboundNatRule(loadBalancer3, NatRule6000to22forVM3)
                         .WithExistingLoadBalancerInboundNatRule(loadBalancer3, NatRule6001to23forVM3);
@@ -212,7 +212,7 @@ namespace ManageInternalLoadBalancer
                         .WithNewResourceGroup(rgName)
                         .WithExistingPrimaryNetwork(network)
                         .WithSubnet("Back-end")
-                        .WithPrimaryPrivateIpAddressDynamic()
+                        .WithPrimaryPrivateIPAddressDynamic()
                         .WithExistingLoadBalancerBackend(loadBalancer3, backendPoolName3)
                         .WithExistingLoadBalancerInboundNatRule(loadBalancer3, NatRule6002to22forVM4)
                         .WithExistingLoadBalancerInboundNatRule(loadBalancer3, NatRule6003to23forVM4);
@@ -336,7 +336,7 @@ namespace ManageInternalLoadBalancer
                         .WithExistingResourceGroup(rgName)
                         .DefinePrivateFrontend(privateFrontEndName)
                             .WithExistingSubnet(network, "Back-end")
-                            .WithPrivateIpAddressStatic("172.16.3.15")
+                            .WithPrivateIPAddressStatic("172.16.3.15")
                             .Attach()
                         
                         // Add one backend - one per rule
@@ -441,7 +441,7 @@ namespace ManageInternalLoadBalancer
                 var credentials = SdkContext.AzureCredentialsFactory.FromFile(Environment.GetEnvironmentVariable("AZURE_AUTH_LOCATION"));
 
                 var azure = Azure.Configure()
-                    .WithLogLevel(HttpLoggingDelegatingHandler.Level.BASIC)
+                    .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
                     .Authenticate(credentials)
                     .WithDefaultSubscription();
 

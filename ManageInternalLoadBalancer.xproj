@@ -7,7 +7,7 @@
 
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>0cfc9876-a225-4747-b7fc-72c5f9c20804</ProjectGuid>
+    <ProjectGuid>b55e6b49-2215-4256-aef4-31801c0a30b0</ProjectGuid>
     <RootNamespace>ManageInternalLoadBalancer</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
