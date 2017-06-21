@@ -4,7 +4,7 @@ platforms: .Net
 author: selvasingh
 ---
 
-#Getting Started with Network - Manage Internal Load Balancer - in .Net #
+# Getting Started with Network - Manage Internal Load Balancer - in .Net #
 
           Azure Network sample for managing internal load balancers -
           High-level ...
