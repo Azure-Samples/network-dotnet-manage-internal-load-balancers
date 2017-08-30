@@ -1,0 +1,2 @@
+C:\Sources\dotnet-samples\network-dotnet-manage-internal-load-balancers\bin\Debug\netstandard1.6\ManageInternalLoadBalancer.deps.json
+C:\Sources\dotnet-samples\network-dotnet-manage-internal-load-balancers\obj\Debug\netstandard1.6\ManageInternalLoadBalancer.csproj.CoreCompileInputs.cache
