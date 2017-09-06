@@ -7,14 +7,20 @@ author: selvasingh
 # Getting Started with Network - Manage Internal Load Balancer - in .Net #
 
           Azure Network sample for managing internal load balancers -
+         
           High-level ...
+         
           - Create an internal load balancer that receives network traffic on
             port 1521 (Oracle SQL Node Port) and sends load-balanced traffic
             to two virtual machines
+         
           - Create NAT rules for SSH and TELNET access to virtual
             machines behind the load balancer
+         
           - Create a health probe
+         
           Details ...
+         
           Create an internal facing load balancer with ...
           - A frontend private IP address
           - One backend address pool which contains network interfaces for the virtual
@@ -26,10 +32,13 @@ author: selvasingh
           - Two inbound NAT rules which contain rules that map a public port on the load
             balancer to a port for a specific virtual machine in the backend address pool
             - this provides direct VM connectivity for SSH to port 22 and TELNET to port 23
+         
           Create two network interfaces in the backend subnet ...
           - And associate network interfaces to backend pools and NAT rules
+         
           Create two virtual machines in the backend subnet ...
           - And assign network interfaces
+         
           Update an existing load balancer, configure TCP idle timeout
           Create another load balancer
           List load balancers

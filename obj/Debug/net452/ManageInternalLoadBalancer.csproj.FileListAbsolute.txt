@@ -1,4 +1,0 @@
-C:\Sources\dotnet-samples\network-dotnet-manage-internal-load-balancers\bin\Debug\net452\ManageInternalLoadBalancer.runtimeconfig.json
-C:\Sources\dotnet-samples\network-dotnet-manage-internal-load-balancers\bin\Debug\net452\ManageInternalLoadBalancer.runtimeconfig.dev.json
-C:\Sources\dotnet-samples\network-dotnet-manage-internal-load-balancers\obj\Debug\net452\ManageInternalLoadBalancer.csproj.ManageInternalLoadBalancer.exe.config
-C:\Sources\dotnet-samples\network-dotnet-manage-internal-load-balancers\obj\Debug\net452\ManageInternalLoadBalancer.csproj.CoreCompileInputs.cache
