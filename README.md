@@ -7,6 +7,7 @@ products:
 extensions:
 - services: virtual-network
 - platforms: dotnet
+description: "Azure Network sample for managing internal load balancers."
 ---
 
 # An example illustrating how to use .NET to manage your Azure load balancers #
