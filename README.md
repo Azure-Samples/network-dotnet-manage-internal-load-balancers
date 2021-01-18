@@ -5,8 +5,8 @@ languages:
 products:
 - azure
 extensions:
-- services: virtual-network
-- platforms: dotnet
+  services: virtual-network
+  platforms: dotnet
 ---
 
 # An example illustrating how to use .NET to manage your Azure load balancers #
