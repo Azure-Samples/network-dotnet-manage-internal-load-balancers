@@ -1,32 +1,28 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Azure.Management.Compute.Fluent;
-using Microsoft.Azure.Management.Compute.Fluent.Models;
-using Microsoft.Azure.Management.Fluent;
-using Microsoft.Azure.Management.Network.Fluent;
-using Microsoft.Azure.Management.Network.Fluent.Models;
-using Microsoft.Azure.Management.ResourceManager.Fluent;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Core.ResourceActions;
-using Microsoft.Azure.Management.Samples.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Azure;
+using Azure.Core;
+using Azure.Identity;
+using Azure.ResourceManager.Samples.Common;
+using Azure.ResourceManager.Resources;
+using Azure.ResourceManager;
+using Azure.ResourceManager.Network;
+using Azure.ResourceManager.Network.Models;
+using Azure.ResourceManager.Compute.Models;
+using Azure.ResourceManager.Compute;
 
 namespace ManageInternalLoadBalancer
 {
     public class Program
     {
+        private static ResourceIdentifier? _resourceGroupId = null;
         private static readonly string HttpProbe = "httpProbe";
         private static readonly string TcpLoadBalancingRule = "tcpRule";
         private static readonly string NatRule6000to22forVM3 = "nat6000to22forVM3";
         private static readonly string NatRule6001to23forVM3 = "nat6001to23forVM3";
         private static readonly string NatRule6002to22forVM4 = "nat6002to22forVM4";
         private static readonly string NatRule6003to23forVM4 = "nat6003to23forVM4";
-        private static readonly string UserName = Utilities.CreateUsername();
-        private static readonly string SshKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCfSPC2K7LZcFKEO+/t3dzmQYtrJFZNxOsbVgOVKietqHyvmYGHEC0J2wPdAqQ/63g/hhAEFRoyehM+rbeDri4txB3YFfnOK58jqdkyXzupWqXzOrlKY4Wz9SKjjN765+dqUITjKRIaAip1Ri137szRg71WnrmdP3SphTRlCx1Bk2nXqWPsclbRDCiZeF8QOTi4JqbmJyK5+0UqhqYRduun8ylAwKKQJ1NJt85sYIHn9f1Rfr6Tq2zS0wZ7DHbZL+zB5rSlAr8QyUdg/GQD+cmSs6LvPJKL78d6hMGk84ARtFo4A79ovwX/Fj01znDQkU6nJildfkaolH2rWFG/qttD azjava@javalib.Com";
-
         private static readonly int OracleSQLNodePort = 1521;
 
         /**
@@ -68,41 +64,48 @@ namespace ManageInternalLoadBalancer
          * List load balancers
          * Remove an existing load balancer.
          */
-        public static void RunSample(IAzure azure)
+        public static async Task RunSample(ArmClient client)
         {
-            string rgName = SdkContext.RandomResourceName("rgNEML", 15);
-            string vnetName = SdkContext.RandomResourceName("vnet", 24);
-            string loadBalancerName3 = SdkContext.RandomResourceName("intlb3" + "-", 18);
-            string loadBalancerName4 = SdkContext.RandomResourceName("intlb4" + "-", 18);
+            string rgName = Utilities.CreateRandomName("NetworkSampleRG");
+            string vnetName = Utilities.CreateRandomName("vnet");
+            string loadBalancerName3 = Utilities.CreateRandomName("balancer3-");
+            string loadBalancerName4 = Utilities.CreateRandomName("balancer4-");
+            string networkInterfaceName3 = Utilities.CreateRandomName("nic3");
+            string networkInterfaceName4 = Utilities.CreateRandomName("nic4");
+            string availSetName = Utilities.CreateRandomName("av2");
+            string vmName3 = Utilities.CreateRandomName("lVM3");
+            string vmName4 = Utilities.CreateRandomName("lVM4");
             string privateFrontEndName = loadBalancerName3 + "-BE";
             string backendPoolName3 = loadBalancerName3 + "-BAP3";
-            string networkInterfaceName3 = SdkContext.RandomResourceName("nic3", 24);
-            string networkInterfaceName4 = SdkContext.RandomResourceName("nic4", 24);
-            string availSetName = SdkContext.RandomResourceName("av2", 24);
-            string vmName3 = SdkContext.RandomResourceName("lVM3", 24);
-            string vmName4 = SdkContext.RandomResourceName("lVM4", 24);
-
-            try
             {
+                // Get default subscription
+                SubscriptionResource subscription = await client.GetDefaultSubscriptionAsync();
+
+                // Create a resource group in the EastUS region
+                Utilities.Log($"Creating resource group...");
+                ArmOperation<ResourceGroupResource> rgLro = await subscription.GetResourceGroups().CreateOrUpdateAsync(WaitUntil.Completed, rgName, new ResourceGroupData(AzureLocation.WestUS));
+                ResourceGroupResource resourceGroup = rgLro.Value;
+                _resourceGroupId = resourceGroup.Id;
+                Utilities.Log("Created a resource group with name: " + resourceGroup.Data.Name);
+
                 //=============================================================
                 // Create a virtual network with a frontend and a backend subnets
                 Utilities.Log("Creating virtual network with a frontend and a backend subnets...");
 
-                var network = azure.Networks.Define(vnetName)
-                        .WithRegion(Region.USEast)
-                        .WithNewResourceGroup(rgName)
-                        .WithAddressSpace("172.16.0.0/16")
-                        .DefineSubnet("Front-end")
-                            .WithAddressPrefix("172.16.1.0/24")
-                            .Attach()
-                        .DefineSubnet("Back-end")
-                            .WithAddressPrefix("172.16.3.0/24")
-                            .Attach()
-                        .Create();
+                VirtualNetworkData vnetInput = new VirtualNetworkData()
+                {
+                    Location = resourceGroup.Data.Location,
+                    AddressPrefixes = { "172.16.0.0/16" },
+                    Subnets =
+                    {
+                        new SubnetData() { Name = "Front-end", AddressPrefix = "172.16.1.0/24"},
+                        new SubnetData() { Name = "Back-end", AddressPrefix = "172.16.3.0/24"},
+                    },
+                };
+                var vnetLro = await resourceGroup.GetVirtualNetworks().CreateOrUpdateAsync(WaitUntil.Completed, vnetName, vnetInput);
+                VirtualNetworkResource vnet = vnetLro.Value;
 
-                Utilities.Log("Created a virtual network");
-                // Print the virtual network details
-                Utilities.PrintVirtualNetwork(network);
+                Utilities.Log($"Created a virtual network: {vnet.Data.Name}");
 
                 //=============================================================
                 // Create an internal load balancer
@@ -405,13 +408,15 @@ namespace ManageInternalLoadBalancer
                 azure.LoadBalancers.DeleteById(loadBalancer4.Id);
                 Utilities.Log("Deleted load balancer" + loadBalancerName4);
             }
-            finally
             {
                 try
                 {
-                    Utilities.Log("Deleting Resource Group: " + rgName);
-                    azure.ResourceGroups.DeleteByName(rgName);
-                    Utilities.Log("Deleted Resource Group: " + rgName);
+                    if (_resourceGroupId is not null)
+                    {
+                        Utilities.Log($"Deleting Resource Group...");
+                        await client.GetResourceGroupResource(_resourceGroupId).DeleteAsync(WaitUntil.Completed);
+                        Utilities.Log($"Deleted Resource Group: {_resourceGroupId.Name}");
+                    }
                 }
                 catch (NullReferenceException)
                 {
@@ -424,23 +429,21 @@ namespace ManageInternalLoadBalancer
             }
         }
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            var clientId = Environment.GetEnvironmentVariable("CLIENT_ID");
+            var clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
+            var tenantId = Environment.GetEnvironmentVariable("TENANT_ID");
+            var subscription = Environment.GetEnvironmentVariable("SUBSCRIPTION_ID");
+            ClientSecretCredential credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+            ArmClient client = new ArmClient(credential, subscription);
+
+            await RunSample(client);
+
             try
             {
                 //=================================================================
                 // Authenticate
-                var credentials = SdkContext.AzureCredentialsFactory.FromFile(Environment.GetEnvironmentVariable("AZURE_AUTH_LOCATION"));
-
-                var azure = Azure.Configure()
-                    .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
-                    .Authenticate(credentials)
-                    .WithDefaultSubscription();
-
-                // Print selected subscription
-                Utilities.Log("Selected subscription: " + azure.SubscriptionId);
-
-                RunSample(azure);
             }
             catch (Exception ex)
             {
