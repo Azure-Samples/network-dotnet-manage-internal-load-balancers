@@ -79,7 +79,7 @@ namespace ManageInternalLoadBalancer
             string privateFrontEndName = loadBalancerName3 + "-BE";
             string backendPoolName3 = loadBalancerName3 + "-BAP3";
 
-
+            try
             {
                 // Get default subscription
                 SubscriptionResource subscription = await client.GetDefaultSubscriptionAsync();
@@ -152,8 +152,8 @@ namespace ManageInternalLoadBalancer
                         {
                             Name = privateFrontEndName,
                             PrivateIPAllocationMethod = NetworkIPAllocationMethod.Dynamic,
-                            Subnet = new SubnetData(){ Id = vnet.Data.Subnets.First(item => item.Name == "Back-end").Id}
-                            //    .WithPrivateIPAddressStatic("172.16.3.5")
+                            Subnet = new SubnetData(){ Id = vnet.Data.Subnets.First(item => item.Name == "Back-end").Id},
+                            PrivateIPAddress = "172.16.3.5"
                         }
                     },
                     BackendAddressPools =
@@ -173,7 +173,7 @@ namespace ManageInternalLoadBalancer
                             BackendAddressPoolId = backendAddressPoolId,
                             Protocol = LoadBalancingTransportProtocol.Tcp,
                             FrontendPort = OracleSQLNodePort,
-                            //BackendPort = OracleSQLNodePort,
+                            BackendPort = OracleSQLNodePort,
                             EnableFloatingIP = false,
                             IdleTimeoutInMinutes = 15,
                             ProbeId = new ResourceIdentifier($"{resourceGroup.Id}/providers/Microsoft.Network/loadBalancers/{loadBalancerName3}/probes/{HttpProbe}"),
@@ -399,8 +399,8 @@ namespace ManageInternalLoadBalancer
                         {
                             Name = privateFrontEndName,
                             PrivateIPAllocationMethod = NetworkIPAllocationMethod.Dynamic,
-                            Subnet = new SubnetData(){ Id = vnet.Data.Subnets.First(item => item.Name == "Back-end").Id }
-                                //    .WithPrivateIPAddressStatic("172.16.3.15")
+                            Subnet = new SubnetData(){ Id = vnet.Data.Subnets.First(item => item.Name == "Back-end").Id },
+                            PrivateIPAddress = "172.16.3.15"
                         }
                     },
                     BackendAddressPools =
@@ -421,7 +421,7 @@ namespace ManageInternalLoadBalancer
                             BackendAddressPoolId = backendAddressPoolId,
                             Protocol = LoadBalancingTransportProtocol.Tcp,
                             FrontendPort = OracleSQLNodePort,
-                            //BackendPort = OracleSQLNodePort,
+                            BackendPort = OracleSQLNodePort,
                             EnableFloatingIP = false,
                             IdleTimeoutInMinutes = 15,
                             ProbeId = new ResourceIdentifier($"{resourceGroup.Id}/providers/Microsoft.Network/loadBalancers/{loadBalancerName4}/probes/{HttpProbe}"),
@@ -508,6 +508,7 @@ namespace ManageInternalLoadBalancer
                 await loadBalancer4.DeleteAsync(WaitUntil.Completed);
                 Utilities.Log("Deleted load balancer" + loadBalancerName4);
             }
+            finally
             {
                 try
                 {
@@ -531,19 +532,19 @@ namespace ManageInternalLoadBalancer
 
         public static async Task Main(string[] args)
         {
-            var clientId = Environment.GetEnvironmentVariable("CLIENT_ID");
-            var clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
-            var tenantId = Environment.GetEnvironmentVariable("TENANT_ID");
-            var subscription = Environment.GetEnvironmentVariable("SUBSCRIPTION_ID");
-            ClientSecretCredential credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-            ArmClient client = new ArmClient(credential, subscription);
-
-            await RunSample(client);
-
             try
             {
                 //=================================================================
                 // Authenticate
+
+                var clientId = Environment.GetEnvironmentVariable("CLIENT_ID");
+                var clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
+                var tenantId = Environment.GetEnvironmentVariable("TENANT_ID");
+                var subscription = Environment.GetEnvironmentVariable("SUBSCRIPTION_ID");
+                ClientSecretCredential credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+                ArmClient client = new ArmClient(credential, subscription);
+
+                await RunSample(client);
             }
             catch (Exception ex)
             {
